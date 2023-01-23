@@ -1,0 +1,170 @@
+.wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  padding: 0 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #222;
+  .iconCommon {
+    font-size: 30px;
+    color: var(--commonColor);
+    cursor: pointer;
+    margin-left: 20px;
+  }
+  .controlsWrapper {
+    margin-top: 5px;
+    width: 400px;
+    .tools {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      --commonColor: #ccc;
+
+      .praymode {
+        font-size: 25px;
+        margin-right: 10px;
+        color: #eee;
+      }
+      .lyricButton {
+        display: flex;
+        width: 23px;
+        height: 23px;
+        justify-content: center;
+        align-items: center;
+        margin-left: 30px;
+        font-size: 13px;
+        font-weight: 600;
+
+        &.disable {
+          color: #666;
+        }
+      }
+    }
+    .progressWrapper {
+      margin-top: 6px;
+      height: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      .time {
+        font-size: 12px;
+        color: #999;
+        font-weight: 500;
+      }
+      .progressBarWrapper {
+        position: relative;
+        margin: 0 5px;
+        border-radius: 5px;
+        flex: 1;
+        height: 3px;
+        border: 4px solid #222;
+        background-color: #aaa;
+        .realProgress {
+          border-radius: 5px;
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          background-color: red;
+          width: 30%;
+          .currentDot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 3px;
+            border-radius: 50%;
+            background-color: #fff;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            transform: scale(2, 2);
+          }
+        }
+        &:hover {
+          border: 4px solid #445;
+          .currentDot {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+  .leftExtraToolsWrapper {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-start;
+    height: 70px;
+    img {
+      width: 70px;
+      height: 70px;
+    }
+    .artistInfo {
+      margin-left: 20px;
+      color: #ccc;
+      font-size: 14px;
+
+      .artistsWrapper {
+        font-size: 12px;
+        margin-top: 6px;
+      }
+    }
+  }
+  .rightExtraToolsWrapper {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
+    .volumn {
+      font-size: 20px;
+    }
+    .openList {
+      margin-left: 20px;
+      font-size: 20px;
+    }
+  }
+}
+
+.volumnWrapper {
+  width: 150px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  .volumnBar {
+    position: relative;
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    background-color: #ccc;
+    border-radius: 2px;
+    .volumnPercent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      // width: 50%;
+      height: 5px;
+      background-color: #888;
+      border-radius: 2px;
+    }
+    .volumnCurrent {
+      position: absolute;
+      top: -6px;
+      // left: 50%;
+      width: 4px;
+      height: 12px;
+      background-color: red;
+      border-radius: 3px;
+      transition: transform 0.3s ease-in-out;
+      padding: 3px 2px;
+
+      &:hover {
+        transform: scale(1.3, 1.3);
+      }
+    }
+  }
+}
