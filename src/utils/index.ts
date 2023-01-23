@@ -10,3 +10,11 @@ export function transformMIllionSecondsToTimeString(ms: number): string {
     return `${m > 9 ? m : '0' + m}:${s > 9 ? s : '0' + s}`;
   }
 }
+
+// 根据作者全程获得用于显示的作者名字
+export function genArtistName(fullname: string): string {
+  if(fullname.length < 12) return fullname
+  const split = fullname.split(' ')
+  if(split.length === 1) return fullname
+  return split[0]
+}

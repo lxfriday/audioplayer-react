@@ -5,11 +5,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../models";
 import AudioListDrawer from "./components/AudioListDrawer";
 import PlayerBar from "./components/PlayerBar";
+import AudioDetails from "./components/AudioDetails";
 import {
-  setCurrentPlayingIdxReducer,
   setIsPlayingReducer,
   changePlayModeReducer,
-  PlayMode,
 } from "../models/AudioPlayer";
 import styles from "./AudioPlayer.module.less";
 
@@ -31,7 +30,7 @@ export default function AudioPlayer() {
       type: "audioPlayer/fetchAudioUrlEffect",
       payload: {
         idx: idx,
-        shouldPlay: true
+        shouldPlay: true,
       },
     });
   }
@@ -57,6 +56,12 @@ export default function AudioPlayer() {
   }, []);
   return (
     <div className={styles.wrapper}>
+      <AudioDetails
+        currentPlayingIdx={currentPlayingIdx}
+        audioList={audioList}
+        isPlaying={isPlaying}
+        currentPlayingInfo={currentPlayingInfo}
+      />
       <div className={styles.contentWrapper}></div>
       <AudioListDrawer
         drawerRef={drawerRef}

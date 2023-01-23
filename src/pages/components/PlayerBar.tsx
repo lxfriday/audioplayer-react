@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, DragEvent, MouseEvent } from "react";
+import { useEffect, useRef, useMemo, useCallback } from "react";
 import {
   PlayCircleOutlined,
   PauseCircleFilled,
@@ -8,11 +8,15 @@ import {
 import { Popover } from "antd";
 import classnames from "classnames";
 import { useImmer } from "use-immer";
-import type { CurrentPlayingInfo, AudioInfo } from "../../models/AudioPlayer";
 import { PlayMode } from "../../models/AudioPlayer";
 import { IconFont } from "../../utils/config";
+import Marquee from "@components/Marquee";
+import { genArtistName } from "@utils/index";
 import { transformMIllionSecondsToTimeString } from "../../utils";
 import styles from "./PlayerBar.module.less";
+
+import type { DragEvent, MouseEvent } from "react";
+import type { CurrentPlayingInfo, AudioInfo } from "../../models/AudioPlayer";
 
 type PlayerBarParams = {
   handlePlay(): void;
@@ -59,18 +63,6 @@ export default function PlayerBar({
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const volumnBarRef = useRef<HTMLDivElement>(null);
-  function handleSetVolumn(e: MouseEvent) {
-    const player = audioRef.current;
-    const volumnBar = volumnBarRef.current;
-    if (volumnBar && player) {
-      const barWidth = volumnBar.clientWidth;
-      const distance = Math.abs(
-        e.clientX - volumnBar.getBoundingClientRect().left
-      );
-      player.volume = parseFloat((distance / barWidth).toFixed(2));
-      setCurrentVolumn(player.volume);
-    }
-  }
 
   function handlePressPause() {
     const player = audioRef.current;
@@ -86,37 +78,37 @@ export default function PlayerBar({
     const player = audioRef.current;
     if (bar && player) {
       const barWidth = bar.clientWidth;
-      const distance = Math.abs(e.clientX - bar.offsetLeft);
+      const distance = Math.abs(e.clientX - bar.getBoundingClientRect().left);
       player.currentTime = Math.floor(
         (audioList[currentPlayingIdx].duration * distance) / barWidth / 1000
       );
     }
   }
 
-  function handleDragVolumnCurrent(e: DragEvent) {
-    const player = audioRef.current;
-    const volumnBar = volumnBarRef.current;
-    if (volumnBar && player && e.clientX !== 0) {
-      const barWidth = volumnBar.clientWidth;
-      let distance = e.clientX - volumnBar.getBoundingClientRect().left;
-      distance = distance < 0 ? 0 : distance;
-      const vo = parseFloat((distance / barWidth).toFixed(2));
-      player.volume = vo > 1 ? 1 : vo;
-      setCurrentVolumn(player.volume);
-    }
-  }
-  function handleDragVolumnCurrentEnd(e: DragEvent) {
+  const handleSetVolumn = useCallback((e: MouseEvent) => {
     const player = audioRef.current;
     const volumnBar = volumnBarRef.current;
     if (volumnBar && player) {
-      const barWidth = volumnBar.clientWidth;
-      let distance = e.clientX - volumnBar.getBoundingClientRect().left;
-      distance = distance < 0 ? 0 : distance;
-      const vo = parseFloat((distance / barWidth).toFixed(2));
-      player.volume = vo > 1 ? 1 : vo;
+      const barHeight = volumnBar.clientHeight;
+      const distance = e.clientY - volumnBar.getBoundingClientRect().top;
+      const vo = parseFloat(((barHeight - distance) / barHeight).toFixed(2));
+      player.volume = vo < 0 ? 0 : vo;
       setCurrentVolumn(player.volume);
     }
-  }
+  }, []);
+
+  const handleDragVolumnCurrent = useCallback((e: MouseEvent) => {
+    const player = audioRef.current;
+    const volumnBar = volumnBarRef.current;
+    if (volumnBar && player && e.clientY !== 0) {
+      const barHeight = volumnBar.clientHeight;
+      let distance = e.clientY - volumnBar.getBoundingClientRect().top;
+      distance = distance < 0 ? 0 : distance;
+      const vo = parseFloat(((barHeight - distance) / barHeight).toFixed(2));
+      player.volume = vo < 0 ? 0 : vo;
+      setCurrentVolumn(player.volume);
+    }
+  }, [])
   useEffect(() => {
     const player = audioRef.current;
     if (player) {
@@ -175,27 +167,68 @@ export default function PlayerBar({
     }
   }, [isPlaying]);
 
-  return (
-    <div className={styles.wrapper}>
-      {currentPlayingInfo && (
+  const player = useMemo(() => {
+    if (currentPlayingInfo) {
+      return (
         <audio
           style={{ display: "none" }}
           ref={audioRef}
           controls
           src={currentPlayingInfo.audioUrl}
         ></audio>
-      )}
+      );
+    }
+  }, [currentPlayingInfo]);
+
+  const artistsWrapper = useMemo(() => {
+    return (
+      <div className={styles.artistsWrapper}>
+        {audioList[currentPlayingIdx].artistInfo.map((_, i) => (
+          <div className={styles.artist} key={_.id}>
+            <span>{genArtistName(_.name).trim()}</span>
+            {i !== audioList[currentPlayingIdx].artistInfo.length - 1 ? (
+              <span className={styles.divider}>/</span>
+            ) : (
+              ""
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  }, [audioList, currentPlayingIdx]);
+  const volumnController = useMemo(() => {
+    return (
+      <div className={styles.volumnWrapper}>
+        <div
+          ref={volumnBarRef}
+          onClick={handleSetVolumn}
+          className={styles.volumnBar}
+        >
+          <div
+            className={styles.volumnPercent}
+            style={{ height: `${currentVolumn * 100}%` }}
+          ></div>
+        </div>
+        <div
+          draggable
+          // 需要绑定两次
+          onDrag={handleDragVolumnCurrent}
+          onDragEnd={handleDragVolumnCurrent}
+          className={styles.volumnCurrent}
+          style={{ bottom: `calc(${currentVolumn * 100}% - 4px)` }}
+        ></div>
+      </div>
+    );
+  }, [currentVolumn, handleDragVolumnCurrent, handleSetVolumn]);
+
+  return (
+    <div className={styles.wrapper}>
+      {player}
       <div className={styles.leftExtraToolsWrapper}>
         <img src={audioList[currentPlayingIdx].albume.picUrl} alt="专辑" />
         <div className={styles.artistInfo}>
-          <div className={styles.audioName}>
-            {audioList[currentPlayingIdx].name}
-          </div>
-          <div className={styles.artistsWrapper}>
-            {audioList[currentPlayingIdx].artistInfo.map((_) => (
-              <span key={_.id}>{_.name} </span>
-            ))}
-          </div>
+          <Marquee width={150} text={audioList[currentPlayingIdx].name} />
+          {artistsWrapper}
         </div>
       </div>
       <div className={styles.controlsWrapper}>
@@ -263,30 +296,7 @@ export default function PlayerBar({
         </div>
       </div>
       <div className={styles.rightExtraToolsWrapper}>
-        <Popover
-          content={
-            <div className={styles.volumnWrapper}>
-              <div
-                ref={volumnBarRef}
-                onClick={handleSetVolumn}
-                className={styles.volumnBar}
-              >
-                <div
-                  className={styles.volumnPercent}
-                  style={{ width: `${currentVolumn * 100}%` }}
-                ></div>
-                <div
-                  draggable
-                  onDrag={handleDragVolumnCurrent}
-                  onDragEnd={handleDragVolumnCurrentEnd}
-                  className={styles.volumnCurrent}
-                  style={{ left: `calc(${currentVolumn * 100}% - 4px)` }}
-                ></div>
-              </div>
-            </div>
-          }
-          trigger="hover"
-        >
+        <Popover content={volumnController} trigger="hover">
           <IconFont
             title="音量"
             onClick={() => {}}

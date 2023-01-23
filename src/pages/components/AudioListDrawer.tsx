@@ -1,17 +1,22 @@
-import React, { useState, useRef, useEffect, useImperativeHandle, MutableRefObject } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  MutableRefObject,
+} from "react";
 import { Drawer } from "antd";
 import classnames from "classnames";
-
+import { BorderOutlined } from "@ant-design/icons";
 import type { AudioInfo } from "../../models/AudioPlayer";
 import { transformMIllionSecondsToTimeString } from "../../utils";
-import { IconFont } from "../../utils/config";
 import styles from "./AudioListDrawer.module.less";
 
 type AudioListDrawerParams = {
   handleSwitchTo(idx: number): void;
   audioList: AudioInfo[];
   currentPlayingIdx: number;
-  drawerRef: MutableRefObject<() => void>
+  drawerRef: MutableRefObject<() => void>;
 };
 
 export default function AudioListDrawer({
@@ -24,8 +29,8 @@ export default function AudioListDrawer({
   const listWrapperRef = useRef(null);
   useEffect(() => {
     drawerRef.current = () => {
-      setDrawerOpen(true)
-    }
+      setDrawerOpen(true);
+    };
   }, []);
   return (
     <Drawer
@@ -39,7 +44,10 @@ export default function AudioListDrawer({
       open={drawerOpen}
     >
       <div className={styles.wrapper}>
-        <div className={styles.titleWrapper}>播放列表</div>
+        <div className={styles.titleWrapper}>
+          <BorderOutlined style={{ marginRight: 5 }} />
+          播放列表
+        </div>
         <div ref={listWrapperRef} className={styles.listWrapper}>
           {audioList.map((_, i) => (
             <div

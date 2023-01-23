@@ -42,7 +42,7 @@ export interface AudioPlayerState {
 
 const initialState: AudioPlayerState = {
   playMode: PlayMode.listLoop,
-  currentPlayingIdx: 0,
+  currentPlayingIdx: 4,
   isPlaying: false,
   currentPlayingInfo: null,
   audioList: [
@@ -87,15 +87,15 @@ const initialState: AudioPlayerState = {
       artistInfo: [
         {
           id: 12903205,
-          name: "Xomu!nk",
+          name: "Xomu!nk fsdfsdgfdgdfg",
         },
         {
           id: 0,
-          name: "Hyurin",
+          name: "Hyuringdfgdfgdfgdfh",
         },
         {
           id: 36455212,
-          name: "mitsune微音!nk",
+          name: "mitsune微音gdfghfdhfghfgjhfgj!nk",
         },
       ],
       albume: {
@@ -120,6 +120,23 @@ const initialState: AudioPlayerState = {
         name: "零落",
         picUrl:
           "https://p1.music.126.net/fki_SIPOBGtiK4aTMyB65g==/109951167216141619.jpg",
+      },
+    },
+    {
+      id: 1347846723,
+      name: "菅野祐悟-JOJO的奇妙冒险白金之星处刑曲电音版（Kirara Magic Remix）",
+      duration: 187472,
+      artistInfo: [
+        {
+          id: 30226109,
+          name: "Kirara Magic",
+        },
+      ],
+      albume: {
+        id: 75657939,
+        name: "JOJO的奇妙冒险白金之星处刑曲电音版",
+        picUrl:
+          "https://p2.music.126.net/-QyMjrwQ_reituUTtbZEXA==/109951163881903368.jpg",
       },
     },
   ],

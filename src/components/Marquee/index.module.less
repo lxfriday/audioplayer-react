@@ -1,0 +1,22 @@
+.wrapper {
+  font-size: 14px;
+  overflow: hidden;
+  white-space: nowrap;
+
+  .text {
+    cursor: pointer;
+    display: inline-block;
+    &.shouldPlay {
+      animation: wordsLoop linear 1 normal;
+    }
+  }
+}
+
+@keyframes wordsLoop {
+  0% {
+    transform: translateX(0px);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
