@@ -19,8 +19,11 @@
     position: absolute;
     left: 50%;
     transform: translate(-50%);
-    margin-top: 5px;
     width: 400px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     .tools {
       display: flex;
       justify-content: center;
@@ -95,6 +98,14 @@
           }
         }
       }
+    }
+    .disableOverlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, .3);
     }
   }
   .leftExtraToolsWrapper {

@@ -13,13 +13,17 @@
       height: calc(100vh - 70px);
       align-items: center;
       justify-content: center;
+      .noAudio {
+        color: #fff;
+        font-size: 30px;
+      }
       .imgWrapper {
         img {
           width: 400px;
           height: 400px;
           border-radius: 50%;
-          animation: albumImgRotate 15s linear infinite;
           box-shadow: 0 0 50px #555;
+          animation: albumImgRotate 15s linear infinite;
         }
       }
       .detailsWrapper {
@@ -35,9 +39,14 @@
           max-width: 700px;
           // ff
           scrollbar-width: none;
+          transition: background-color .3s ease;
+          background-color: transparent;
           // webkit
           &::-webkit-scrollbar {
             width: 0;
+          }
+          &:hover {
+            background-color: #444;
           }
           .lyricLine {
             cursor: pointer;
@@ -53,6 +62,7 @@
               transform: scale(1.5);
             }
           }
+          
         }
       }
     }

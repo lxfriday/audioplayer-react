@@ -24,6 +24,8 @@ function AudioPlayer() {
   const dispatch = useDispatch();
   const [isInitial, setIsInitial] = useImmer(true);
   const drawerRef = useRef<() => void>(() => {});
+  // 当前播放列表为空
+  const isCurrentPlayingNone = !audioList[currentPlayingIdx];
 
   // 切换到指定的某一条，直接点击某个歌曲
   const handleSwitchTo = useCallback((idx: number) => {
@@ -58,6 +60,7 @@ function AudioPlayer() {
   return (
     <div className={styles.wrapper}>
       <AudioDetails
+        isCurrentPlayingNone={isCurrentPlayingNone}
         currentPlayingIdx={currentPlayingIdx}
         audioList={audioList}
         isPlaying={isPlaying}
@@ -65,12 +68,14 @@ function AudioPlayer() {
         currentPlayingTime={currentPlayingTime}
       />
       <AudioListDrawer
+        isCurrentPlayingNone={isCurrentPlayingNone}
         drawerRef={drawerRef}
         handleSwitchTo={handleSwitchTo}
         audioList={audioList}
         currentPlayingIdx={currentPlayingIdx}
       />
       <PlayerBar
+        isCurrentPlayingNone={isCurrentPlayingNone}
         handleSwitchTo={handleSwitchTo}
         handleChangePlayMode={handleChangePlayMode}
         handlePause={handlePause}
@@ -87,4 +92,4 @@ function AudioPlayer() {
   );
 }
 
-export default AudioPlayer
+export default AudioPlayer;

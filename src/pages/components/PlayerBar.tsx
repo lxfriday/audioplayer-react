@@ -9,7 +9,11 @@ import { Popover } from "antd";
 import classnames from "classnames";
 import { useImmer } from "use-immer";
 import { useDispatch, useSelector } from "react-redux";
-import { PlayMode, setCurrentPlayingTimeReducer } from "@models/AudioPlayer";
+import {
+  PlayMode,
+  setCurrentPlayingTimeReducer,
+  resetPlayerParamsReducer,
+} from "@models/AudioPlayer";
 import { IconFont } from "@utils/config";
 import Marquee from "@components/Marquee";
 import { genArtistName } from "@utils/index";
@@ -32,6 +36,7 @@ type PlayerBarParams = {
   isInitial: boolean;
   isPlaying: boolean;
   playMode: PlayMode;
+  isCurrentPlayingNone: boolean;
 };
 
 const playModesIconNames = {
@@ -58,6 +63,7 @@ export default function PlayerBar({
   isInitial,
   isPlaying,
   playMode,
+  isCurrentPlayingNone,
 }: PlayerBarParams) {
   const currentTime = useSelector(
     (rootState: RootState) => rootState.audioPlayer.currentPlayingTime
@@ -132,25 +138,10 @@ export default function PlayerBar({
           }
         }
       };
-      // 切换播放进度-开始
-      player.onseeking = function (e) {
-        // console.log("seeking");
-      };
-      // 切换播放进度-结束
-      player.onseeked = function (e) {
-        // console.log("onseeked");
-      };
-      player.onplay = function (e) {
-        // console.log("onplay");
-      };
-      player.onpause = function (e) {
-        // console.log("onpause");
-      };
-      player.onplaying = function (e) {
-        // console.log("onplaying");
-      };
-      player.onloadeddata = function (e) {
-        // console.log("onloadeddata");
+      player.onerror = (e) => {
+        window.eyeConsole("player error， 重置播放器参数");
+        console.log(e);
+        dispatch(resetPlayerParamsReducer());
       };
       player.ontimeupdate = function (e) {
         // console.log("ontimeupdate", player.currentTime);
@@ -163,12 +154,14 @@ export default function PlayerBar({
     if (player && currentPlayingInfo && !isInitial) {
       player.src = currentPlayingInfo.audioUrl;
       player.play();
+      window.eyeConsole("AAAA");
     }
   }, [currentPlayingInfo, isInitial]);
   useEffect(() => {
     const player = audioRef.current;
     if (player && isPlaying) {
       player.play();
+      window.eyeConsole("BBB");
     }
   }, [isPlaying]);
 
@@ -185,7 +178,7 @@ export default function PlayerBar({
     }
   }, [currentPlayingInfo]);
 
-  const artistsWrapper = useMemo(() => {
+  const genArtistsWrapper = useCallback(() => {
     return (
       <div className={styles.artistsWrapper}>
         {audioList[currentPlayingIdx].artistInfo.map((_, i) => (
@@ -225,16 +218,19 @@ export default function PlayerBar({
       </div>
     );
   }, [currentVolumn, handleDragVolumnCurrent, handleSetVolumn]);
-
   return (
     <div className={styles.wrapper}>
       {player}
       <div className={styles.leftExtraToolsWrapper}>
-        <img src={audioList[currentPlayingIdx].albume.picUrl} alt="专辑" />
-        <div className={styles.artistInfo}>
-          <Marquee width={150} text={audioList[currentPlayingIdx].name} />
-          {artistsWrapper}
-        </div>
+        {!isCurrentPlayingNone && (
+          <img src={audioList[currentPlayingIdx].albume.picUrl} alt="专辑" />
+        )}
+        {!isCurrentPlayingNone && (
+          <div className={styles.artistInfo}>
+            <Marquee width={150} text={audioList[currentPlayingIdx].name} />
+            {genArtistsWrapper()}
+          </div>
+        )}
       </div>
       <div className={styles.controlsWrapper}>
         <div className={styles.tools}>
@@ -274,7 +270,9 @@ export default function PlayerBar({
         </div>
         <div className={styles.progressWrapper}>
           <span className={styles.time}>
-            {transformMIllionSecondsToTimeString(currentTime * 1000)}
+            {isCurrentPlayingNone
+              ? ""
+              : transformMIllionSecondsToTimeString(currentTime * 1000)}
           </span>
           <div
             ref={progressBarRef}
@@ -284,21 +282,26 @@ export default function PlayerBar({
             <div
               className={styles.realProgress}
               style={{
-                width: calcPercent(
-                  currentTime,
-                  audioList[currentPlayingIdx].duration
-                ),
+                width: isCurrentPlayingNone
+                  ? 0
+                  : calcPercent(
+                      currentTime,
+                      audioList[currentPlayingIdx].duration
+                    ),
               }}
             >
               <div className={styles.currentDot}></div>
             </div>
           </div>
           <span className={styles.time}>
-            {transformMIllionSecondsToTimeString(
-              audioList[currentPlayingIdx].duration
-            )}
+            {isCurrentPlayingNone
+              ? ""
+              : transformMIllionSecondsToTimeString(
+                  audioList[currentPlayingIdx].duration
+                )}
           </span>
         </div>
+        {isCurrentPlayingNone && <div className={styles.disableOverlay}></div>}
       </div>
       <div className={styles.rightExtraToolsWrapper}>
         <Popover content={volumnController} trigger="hover">

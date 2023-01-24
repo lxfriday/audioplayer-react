@@ -10,6 +10,7 @@ type AudioDetailsParams = {
   currentPlayingIdx: number;
   currentPlayingTime: number;
   isPlaying: boolean;
+  isCurrentPlayingNone: boolean;
 };
 
 function isCurrentLine(currentTime: number, t: number, nextT?: number) {
@@ -25,6 +26,7 @@ export default function AudioDetails({
   currentPlayingIdx,
   currentPlayingTime,
   isPlaying,
+  isCurrentPlayingNone,
 }: AudioDetailsParams) {
   const [lyricAutoScroll, setLyricAutoScroll] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -60,7 +62,7 @@ export default function AudioDetails({
       if (isPlaying) img.style.animationPlayState = "";
       else img.style.animationPlayState = "paused";
     }
-  }, [isPlaying]);
+  }, [isPlaying, currentPlayingInfo]);
 
   function getLyricWrapper() {
     if (currentPlayingInfo) {
@@ -99,21 +101,32 @@ export default function AudioDetails({
     }
   }
 
-  return (
-    <div className={styles.wrapper}>
-      <div className={styles.AudioInfoWrapper}>
+  function genAudioArea() {
+    if (!isCurrentPlayingNone) {
+      return (
         <div className={styles.audioAreaWrapper}>
           <div className={styles.imgWrapper}>
             <img
               ref={imgRef}
               src={audioList[currentPlayingIdx].albume.picUrl}
               alt="专辑图片"
-              className={classnames(isPlaying && styles.isPlaying)}
             />
           </div>
           <div className={styles.detailsWrapper}>{getLyricWrapper()}</div>
         </div>
-      </div>
+      );
+    } else {
+      return (
+        <div className={styles.audioAreaWrapper}>
+          <div className={styles.noAudio}>选择一首歌曲播放把~</div>
+        </div>
+      );
+    }
+  }
+
+  return (
+    <div className={styles.wrapper}>
+      <div className={styles.AudioInfoWrapper}>{genAudioArea()}</div>
     </div>
   );
 }

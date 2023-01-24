@@ -3,7 +3,7 @@ import { message } from "antd";
 import { fetchAudioUrlService, fetchAudioLyricService } from "../services/api";
 import { AudioPlayerState } from "./AudioPlayer";
 import { transformLyricTimeStr } from "@utils/index";
-import type { LyricsLineType } from "./AudioPlayer";
+import type { LyricsLineType, AudioInfo } from "./AudioPlayer";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from ".";
 
@@ -21,11 +21,15 @@ export function* switchAudioToEffect(
       fetchAudioUrlService,
       id
     );
-    if(urlRes.code !== 200) throw new Error('接口返回 ' + urlRes.code)
+    if (urlRes.code !== 200) throw new Error("接口返回 " + urlRes.code);
 
     try {
-      const lyricsRes: { lrc: any, code: number } = yield call(fetchAudioLyricService, id);
-      if(lyricsRes.code !== 200) throw new Error(' 接口返回 ' + lyricsRes.code)
+      const lyricsRes: { lrc: any; code: number } = yield call(
+        fetchAudioLyricService,
+        id
+      );
+      if (lyricsRes.code !== 200)
+        throw new Error(" 接口返回 " + lyricsRes.code);
 
       yield put({
         type: "audioPlayer/setCurrentPlayingInfoReducer",
@@ -83,4 +87,60 @@ export function* initPlayerEffect() {
     // yield put({ type: "USER_FETCH_FAILED", message: (e as Error).message });
     message.error("播放器初始化失败" + (e as Error).message);
   }
+}
+
+/**
+ * 从歌单删除指定的歌曲
+ */
+export function* deleteFromAudioListEffect(
+  action: PayloadAction<{ idx: number }>
+) {
+  // 删除的是currentIdx
+  // 删除的是currentIdx之前的
+  // 删除的是currentIdx之后的
+  // 删除之后列表为空
+  // 删除之后列表不为空
+  const audioPlayer: AudioPlayerState = yield select(
+    (rootState: RootState) => rootState.audioPlayer
+  );
+  let newAudioList: AudioInfo[] = [];
+  const audioList = audioPlayer.audioList;
+  const { idx } = action.payload;
+  let currentPlayingIdx = audioPlayer.currentPlayingIdx;
+  // 删除之后列表为空
+  // 删除之后列表不为空
+  if (audioList.length === 1) {
+    yield put({
+      type: "audioPlayer/cleanAudioListReducer",
+    });
+  } else {
+    // 删除的是currentIdx
+    let isDeletingCurrent = false;
+    newAudioList = [...audioList.slice(0, idx), ...audioList.slice(idx + 1)];
+    if (currentPlayingIdx === idx) {
+      isDeletingCurrent = true;
+      if (idx === audioList.length - 1) currentPlayingIdx = 0;
+    } else if (idx < currentPlayingIdx) {
+      currentPlayingIdx--;
+    } else {
+      // currentPlayingIdx 不变
+    }
+    yield put({
+      type: "audioPlayer/deleteOneAudioInAudioListReducer",
+      payload: {
+        audioList: newAudioList,
+        currentPlayingIdx,
+        isDeletingCurrent,
+      },
+    });
+    yield put({
+      type: "audioPlayer/switchAudioToEffect",
+      payload: {
+        idx: currentPlayingIdx,
+        shouldPlay: true
+      },
+    });
+  }
+  // state.audioList = newAudioList;
+  // state.currentPlayingIdx = currentPlayingIdx;
 }

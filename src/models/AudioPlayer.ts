@@ -19,7 +19,7 @@ export interface AudioInfo {
   };
 }
 
-export type LyricsLineType = [number, string]
+export type LyricsLineType = [number, string];
 
 export type CurrentPlayingInfo = {
   id: number; // audio id
@@ -192,6 +192,93 @@ export const audioPlayerSlice = createSlice({
     ) => {
       state.currentPlayingTime = action.payload.time;
     },
+    updateOrderReducer: (
+      state,
+      action: PayloadAction<{ srcIdx: number; desIdx: number }>
+    ) => {
+      const audioList = state.audioList;
+      const { srcIdx, desIdx } = action.payload;
+      let currentPlayingIdx = state.currentPlayingIdx;
+
+      if (srcIdx === currentPlayingIdx) {
+        currentPlayingIdx = desIdx;
+      } else if (desIdx === currentPlayingIdx) {
+        if (srcIdx < currentPlayingIdx) currentPlayingIdx--;
+        else currentPlayingIdx++;
+      } else if (srcIdx < currentPlayingIdx && currentPlayingIdx < desIdx) {
+        currentPlayingIdx--;
+      } else if (desIdx < currentPlayingIdx && currentPlayingIdx < srcIdx) {
+        currentPlayingIdx++;
+      }
+
+      const newAudioList = [];
+      for (let i = 0; i < audioList.length; i++) {
+        if (i === srcIdx) continue;
+        if (i === desIdx) {
+          if (srcIdx < desIdx) {
+            newAudioList.push(audioList[i]);
+            newAudioList.push(audioList[srcIdx]);
+          } else {
+            newAudioList.push(audioList[srcIdx]);
+            newAudioList.push(audioList[i]);
+          }
+        } else {
+          newAudioList.push(audioList[i]);
+        }
+      }
+      state.currentPlayingIdx = currentPlayingIdx;
+      state.audioList = newAudioList;
+    },
+    /**
+     * 清空播放列表
+     */
+    cleanAudioListReducer: (state) => {
+      state.audioList = [];
+      state.isPlaying = false;
+      state.currentPlayingIdx = -1;
+      state.currentPlayingInfo = null;
+      state.currentPlayingTime = 0;
+    },
+    /**
+     * 更新播放列表
+     */
+    updateAudioListReducer: (
+      state,
+      action: PayloadAction<{ audioList: AudioInfo[] }>
+    ) => {
+      state.audioList = action.payload.audioList;
+    },
+    /**
+     * 从歌单删除当前歌曲
+     */
+    deleteOneAudioInAudioListReducer: (
+      state,
+      action: PayloadAction<{
+        audioList: AudioInfo[];
+        currentPlayingIdx: number;
+        isDeletingCurrent: boolean;
+      }>
+    ) => {
+      const { audioList, currentPlayingIdx, isDeletingCurrent } =
+        action.payload;
+      state.audioList = audioList;
+      state.currentPlayingIdx = currentPlayingIdx;
+      if (isDeletingCurrent) {
+        state.currentPlayingTime = 0;
+        state.currentPlayingInfo = {
+          id: audioList[currentPlayingIdx].id,
+          lyrics: [],
+          audioUrl: "",
+        };
+      }
+    },
+    /**
+     * 重置播放器参数
+     */
+    resetPlayerParamsReducer: (state) => {
+      state.isPlaying = false;
+      state.currentPlayingTime = 0;
+    },
   },
 });
 
@@ -201,6 +288,9 @@ export const {
   setIsPlayingReducer,
   changePlayModeReducer,
   setCurrentPlayingTimeReducer,
+  updateOrderReducer,
+  cleanAudioListReducer,
+  resetPlayerParamsReducer,
 } = audioPlayerSlice.actions;
 
 export default audioPlayerSlice.reducer;
