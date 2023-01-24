@@ -70,10 +70,10 @@ export default function PlayerBar({
   );
   const dispatch = useDispatch();
   // 0~1
-  const [currentVolumn, setCurrentVolumn] = useImmer(1);
+  const [currentVolume, setCurrentVolume] = useImmer(1);
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
-  const volumnBarRef = useRef<HTMLDivElement>(null);
+  const volumeBarRef = useRef<HTMLDivElement>(null);
 
   function handlePressPause() {
     const player = audioRef.current;
@@ -96,28 +96,30 @@ export default function PlayerBar({
     }
   }
 
-  const handleSetVolumn = useCallback((e: MouseEvent) => {
+  const handleSetVolume = useCallback((e: MouseEvent) => {
     const player = audioRef.current;
-    const volumnBar = volumnBarRef.current;
-    if (volumnBar && player) {
-      const barHeight = volumnBar.clientHeight;
-      const distance = e.clientY - volumnBar.getBoundingClientRect().top;
+    const volumeBar = volumeBarRef.current;
+    if (volumeBar && player) {
+      const barHeight = volumeBar.clientHeight;
+      const distance = e.clientY - volumeBar.getBoundingClientRect().top;
       const vo = parseFloat(((barHeight - distance) / barHeight).toFixed(2));
-      player.volume = vo < 0 ? 0 : vo;
-      setCurrentVolumn(player.volume);
+      const volume = vo < 0 ? 0 : vo;
+      setCurrentVolume(volume);
+      localStorage.setItem("volume", String(volume));
     }
   }, []);
 
-  const handleDragVolumnCurrent = useCallback((e: MouseEvent) => {
+  const handleDragVolumeCurrent = useCallback((e: MouseEvent) => {
     const player = audioRef.current;
-    const volumnBar = volumnBarRef.current;
-    if (volumnBar && player && e.clientY !== 0) {
-      const barHeight = volumnBar.clientHeight;
-      let distance = e.clientY - volumnBar.getBoundingClientRect().top;
+    const volumeBar = volumeBarRef.current;
+    if (volumeBar && player && e.clientY !== 0) {
+      const barHeight = volumeBar.clientHeight;
+      let distance = e.clientY - volumeBar.getBoundingClientRect().top;
       distance = distance < 0 ? 0 : distance;
       const vo = parseFloat(((barHeight - distance) / barHeight).toFixed(2));
-      player.volume = vo < 0 ? 0 : vo;
-      setCurrentVolumn(player.volume);
+      const volume = vo < 0 ? 0 : vo;
+      setCurrentVolume(volume);
+      localStorage.setItem("volume", String(volume));
     }
   }, []);
   useEffect(() => {
@@ -154,16 +156,26 @@ export default function PlayerBar({
     if (player && currentPlayingInfo && !isInitial) {
       player.src = currentPlayingInfo.audioUrl;
       player.play();
-      window.eyeConsole("AAAA");
+      window.eyeConsole("play act1");
     }
   }, [currentPlayingInfo, isInitial]);
   useEffect(() => {
     const player = audioRef.current;
     if (player && isPlaying) {
       player.play();
-      window.eyeConsole("BBB");
+      window.eyeConsole("play act2");
     }
   }, [isPlaying]);
+  useEffect(() => {
+    const volume = parseFloat(localStorage.getItem("volume") || "1");
+    setCurrentVolume(volume);
+  }, []);
+  useEffect(() => {
+    const player = audioRef.current;
+    if (player) {
+      player.volume = currentVolume;
+    }
+  }, [currentVolume]);
 
   const player = useMemo(() => {
     if (currentPlayingInfo) {
@@ -194,30 +206,30 @@ export default function PlayerBar({
       </div>
     );
   }, [audioList, currentPlayingIdx]);
-  const volumnController = useMemo(() => {
+  const volumeController = useMemo(() => {
     return (
-      <div className={styles.volumnWrapper}>
+      <div className={styles.volumeWrapper}>
         <div
-          ref={volumnBarRef}
-          onClick={handleSetVolumn}
-          className={styles.volumnBar}
+          ref={volumeBarRef}
+          onClick={handleSetVolume}
+          className={styles.volumeBar}
         >
           <div
-            className={styles.volumnPercent}
-            style={{ height: `${currentVolumn * 100}%` }}
+            className={styles.volumePercent}
+            style={{ height: `${currentVolume * 100}%` }}
           ></div>
         </div>
         <div
           draggable
           // 需要绑定两次
-          onDrag={handleDragVolumnCurrent}
-          onDragEnd={handleDragVolumnCurrent}
-          className={styles.volumnCurrent}
-          style={{ bottom: `calc(${currentVolumn * 100}% - 4px)` }}
+          onDrag={handleDragVolumeCurrent}
+          onDragEnd={handleDragVolumeCurrent}
+          className={styles.volumeCurrent}
+          style={{ bottom: `calc(${currentVolume * 100}% - 4px)` }}
         ></div>
       </div>
     );
-  }, [currentVolumn, handleDragVolumnCurrent, handleSetVolumn]);
+  }, [currentVolume, handleDragVolumeCurrent, handleSetVolume]);
   return (
     <div className={styles.wrapper}>
       {player}
@@ -304,12 +316,12 @@ export default function PlayerBar({
         {isCurrentPlayingNone && <div className={styles.disableOverlay}></div>}
       </div>
       <div className={styles.rightExtraToolsWrapper}>
-        <Popover content={volumnController} trigger="hover">
+        <Popover content={volumeController} trigger="hover">
           <IconFont
             title="音量"
             onClick={() => {}}
             type="icon-shengyinyinliang-copy"
-            className={classnames(styles.iconCommon, styles.volumn)}
+            className={classnames(styles.iconCommon, styles.volume)}
           />
         </Popover>
         <IconFont

@@ -50,99 +50,99 @@ const initialState: AudioPlayerState = {
   isPlaying: false,
   currentPlayingInfo: null,
   audioList: [
-    {
-      id: 515601126,
-      name: "Shivers",
-      duration: 175386,
-      artistInfo: [
-        {
-          id: 74518,
-          name: "Rachel Platten",
-        },
-      ],
-      albume: {
-        id: 36515785,
-        name: "Waves",
-        picUrl:
-          "https://p2.music.126.net/RdkH0kURA5qaJsezY_QnLg==/109951165983479783.jpg",
-      },
-    },
-    {
-      id: 27515086,
-      name: "Try",
-      duration: 247911,
-      artistInfo: [
-        {
-          id: 70821,
-          name: "P!nk",
-        },
-      ],
-      albume: {
-        id: 2623253,
-        name: "Try",
-        picUrl:
-          "https://p1.music.126.net/XGquPCCQbF3uUmuXeuDFNw==/109951165967445090.jpg",
-      },
-    },
-    {
-      id: 1821918070,
-      name: "Gloxinia",
-      duration: 218032,
-      artistInfo: [
-        {
-          id: 12903205,
-          name: "Xomu!nk fsdfsdgfdgdfg",
-        },
-        {
-          id: 0,
-          name: "Hyuringdfgdfgdfgdfh",
-        },
-        {
-          id: 36455212,
-          name: "mitsune微音gdfghfdhfghfgjhfgj!nk",
-        },
-      ],
-      albume: {
-        id: 123342977,
-        name: "Gloxinia",
-        picUrl:
-          "https://p1.music.126.net/1akqn1kqvOAdU6Oj6ZSd3g==/109951165746640538.jpg",
-      },
-    },
-    {
-      id: 1933175252,
-      name: "零落",
-      duration: 248813,
-      artistInfo: [
-        {
-          id: 12578371,
-          name: "金天",
-        },
-      ],
-      albume: {
-        id: 142674434,
-        name: "零落",
-        picUrl:
-          "https://p1.music.126.net/fki_SIPOBGtiK4aTMyB65g==/109951167216141619.jpg",
-      },
-    },
-    {
-      id: 1347846723,
-      name: "菅野祐悟-JOJO的奇妙冒险白金之星处刑曲电音版（Kirara Magic Remix）",
-      duration: 187472,
-      artistInfo: [
-        {
-          id: 30226109,
-          name: "Kirara Magic",
-        },
-      ],
-      albume: {
-        id: 75657939,
-        name: "JOJO的奇妙冒险白金之星处刑曲电音版",
-        picUrl:
-          "https://p2.music.126.net/-QyMjrwQ_reituUTtbZEXA==/109951163881903368.jpg",
-      },
-    },
+    // {
+    //   id: 515601126,
+    //   name: "Shivers",
+    //   duration: 175386,
+    //   artistInfo: [
+    //     {
+    //       id: 74518,
+    //       name: "Rachel Platten",
+    //     },
+    //   ],
+    //   albume: {
+    //     id: 36515785,
+    //     name: "Waves",
+    //     picUrl:
+    //       "https://p2.music.126.net/RdkH0kURA5qaJsezY_QnLg==/109951165983479783.jpg",
+    //   },
+    // },
+    // {
+    //   id: 27515086,
+    //   name: "Try",
+    //   duration: 247911,
+    //   artistInfo: [
+    //     {
+    //       id: 70821,
+    //       name: "P!nk",
+    //     },
+    //   ],
+    //   albume: {
+    //     id: 2623253,
+    //     name: "Try",
+    //     picUrl:
+    //       "https://p1.music.126.net/XGquPCCQbF3uUmuXeuDFNw==/109951165967445090.jpg",
+    //   },
+    // },
+    // {
+    //   id: 1821918070,
+    //   name: "Gloxinia",
+    //   duration: 218032,
+    //   artistInfo: [
+    //     {
+    //       id: 12903205,
+    //       name: "Xomu!nk fsdfsdgfdgdfg",
+    //     },
+    //     {
+    //       id: 0,
+    //       name: "Hyuringdfgdfgdfgdfh",
+    //     },
+    //     {
+    //       id: 36455212,
+    //       name: "mitsune微音gdfghfdhfghfgjhfgj!nk",
+    //     },
+    //   ],
+    //   albume: {
+    //     id: 123342977,
+    //     name: "Gloxinia",
+    //     picUrl:
+    //       "https://p1.music.126.net/1akqn1kqvOAdU6Oj6ZSd3g==/109951165746640538.jpg",
+    //   },
+    // },
+    // {
+    //   id: 1933175252,
+    //   name: "零落",
+    //   duration: 248813,
+    //   artistInfo: [
+    //     {
+    //       id: 12578371,
+    //       name: "金天",
+    //     },
+    //   ],
+    //   albume: {
+    //     id: 142674434,
+    //     name: "零落",
+    //     picUrl:
+    //       "https://p1.music.126.net/fki_SIPOBGtiK4aTMyB65g==/109951167216141619.jpg",
+    //   },
+    // },
+    // {
+    //   id: 1347846723,
+    //   name: "菅野祐悟-JOJO的奇妙冒险白金之星处刑曲电音版（Kirara Magic Remix）",
+    //   duration: 187472,
+    //   artistInfo: [
+    //     {
+    //       id: 30226109,
+    //       name: "Kirara Magic",
+    //     },
+    //   ],
+    //   albume: {
+    //     id: 75657939,
+    //     name: "JOJO的奇妙冒险白金之星处刑曲电音版",
+    //     picUrl:
+    //       "https://p2.music.126.net/-QyMjrwQ_reituUTtbZEXA==/109951163881903368.jpg",
+    //   },
+    // },
   ],
   currentPlayingTime: 0,
 };
@@ -279,6 +279,21 @@ export const audioPlayerSlice = createSlice({
       state.isPlaying = false;
       state.currentPlayingTime = 0;
     },
+    // 从 storage 初始化
+    initFromStorageReducer: (
+      state,
+      action: PayloadAction<{
+        playMode: PlayMode;
+        currentPlayingIdx: number;
+        currentPlayingInfo: null | CurrentPlayingInfo;
+        audioList: AudioInfo[];
+      }>
+    ) => {
+      state.playMode = action.payload.playMode;
+      state.currentPlayingIdx = action.payload.currentPlayingIdx;
+      state.currentPlayingInfo = action.payload.currentPlayingInfo;
+      state.audioList = action.payload.audioList;
+    },
   },
 });
 
@@ -291,6 +306,7 @@ export const {
   updateOrderReducer,
   cleanAudioListReducer,
   resetPlayerParamsReducer,
+  initFromStorageReducer,
 } = audioPlayerSlice.actions;
 
 export default audioPlayerSlice.reducer;

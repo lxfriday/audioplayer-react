@@ -3,6 +3,9 @@ import { message } from "antd";
 import { fetchAudioUrlService, fetchAudioLyricService } from "../services/api";
 import { AudioPlayerState } from "./AudioPlayer";
 import { transformLyricTimeStr } from "@utils/index";
+import { getFromStorage } from "@utils/storage";
+import { PlayMode } from "@models/AudioPlayer";
+
 import type { LyricsLineType, AudioInfo } from "./AudioPlayer";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from ".";
@@ -137,10 +140,33 @@ export function* deleteFromAudioListEffect(
       type: "audioPlayer/switchAudioToEffect",
       payload: {
         idx: currentPlayingIdx,
-        shouldPlay: true
+        shouldPlay: true,
       },
     });
   }
-  // state.audioList = newAudioList;
-  // state.currentPlayingIdx = currentPlayingIdx;
+}
+/**
+ * 从 localStorage 初始化 audioPlayer
+ */
+export function* initFromStorageEffect() {
+  const data = getFromStorage("state.audioPlayer", {
+    playMode: PlayMode.listLoop,
+    currentPlayingIdx: -1,
+    currentPlayingInfo: null,
+    audioList: [],
+  });
+  console.log("storage data", data);
+  yield put({
+    type: "audioPlayer/initFromStorageReducer",
+    payload: data,
+  });
+  if (data.currentPlayingIdx !== -1 && data.audioList.length) {
+    yield put({
+      type: "audioPlayer/switchAudioToEffect",
+      payload: {
+        idx: data.currentPlayingIdx,
+        shouldPlay: false,
+      },
+    });
+  }
 }

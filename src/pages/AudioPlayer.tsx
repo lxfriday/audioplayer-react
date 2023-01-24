@@ -1,16 +1,19 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useImmer } from "use-immer";
 import { useSelector, useDispatch } from "react-redux";
-
-import { RootState } from "../models";
 import AudioListDrawer from "./components/AudioListDrawer";
 import PlayerBar from "./components/PlayerBar";
 import AudioDetails from "./components/AudioDetails";
 import {
   setIsPlayingReducer,
   changePlayModeReducer,
-} from "../models/AudioPlayer";
+} from "@models/AudioPlayer";
+import { saveToStorage } from "@utils/storage";
+
 import styles from "./AudioPlayer.module.less";
+import type { RootState } from "@models/index";
+
+let isFirstRender = true;
 
 function AudioPlayer() {
   const {
@@ -55,6 +58,23 @@ function AudioPlayer() {
   useEffect(() => {
     dispatch({
       type: "audioPlayer/initPlayerEffect",
+    });
+  }, []);
+  // 把播放信息保存到 localStorage
+  useEffect(() => {
+    if (!isFirstRender) {
+      saveToStorage("state.audioPlayer", {
+        playMode,
+        currentPlayingIdx,
+        currentPlayingInfo,
+        audioList,
+      });
+    }
+    isFirstRender = false;
+  }, [playMode, currentPlayingIdx, currentPlayingInfo, audioList]);
+  useEffect(() => {
+    dispatch({
+      type: "audioPlayer/initFromStorageEffect",
     });
   }, []);
   return (
