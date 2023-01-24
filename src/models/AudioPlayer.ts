@@ -19,9 +19,12 @@ export interface AudioInfo {
   };
 }
 
+export type LyricsLineType = [number, string]
+
 export type CurrentPlayingInfo = {
   id: number; // audio id
   audioUrl: string; // audio url
+  lyrics: LyricsLineType[]; // 歌词
 };
 
 export enum PlayMode {
@@ -38,11 +41,12 @@ export interface AudioPlayerState {
   isPlaying: boolean; // 当前是否正在播放
   currentPlayingInfo: CurrentPlayingInfo | null;
   audioList: AudioInfo[];
+  currentPlayingTime: number; // 当前播放进度
 }
 
 const initialState: AudioPlayerState = {
   playMode: PlayMode.listLoop,
-  currentPlayingIdx: 4,
+  currentPlayingIdx: 3,
   isPlaying: false,
   currentPlayingInfo: null,
   audioList: [
@@ -140,6 +144,7 @@ const initialState: AudioPlayerState = {
       },
     },
   ],
+  currentPlayingTime: 0,
 };
 
 export const audioPlayerSlice = createSlice({
@@ -153,11 +158,13 @@ export const audioPlayerSlice = createSlice({
         audioUrl: string;
         idx: number;
         shouldPlay: boolean;
+        lyrics: LyricsLineType[];
       }>
     ) => {
       state.currentPlayingInfo = {
         id: action.payload.id,
         audioUrl: action.payload.audioUrl,
+        lyrics: action.payload.lyrics,
       };
       state.currentPlayingIdx = action.payload.idx;
       if (action.payload.shouldPlay) state.isPlaying = true;
@@ -179,6 +186,12 @@ export const audioPlayerSlice = createSlice({
       const idx = playModes.indexOf(state.playMode);
       state.playMode = playModes[(idx + 1) % playModes.length];
     },
+    setCurrentPlayingTimeReducer: (
+      state,
+      action: PayloadAction<{ time: number }>
+    ) => {
+      state.currentPlayingTime = action.payload.time;
+    },
   },
 });
 
@@ -187,6 +200,7 @@ export const {
   setCurrentPlayingIdxReducer,
   setIsPlayingReducer,
   changePlayModeReducer,
+  setCurrentPlayingTimeReducer,
 } = audioPlayerSlice.actions;
 
 export default audioPlayerSlice.reducer;

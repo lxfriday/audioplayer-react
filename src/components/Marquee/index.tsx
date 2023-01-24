@@ -18,14 +18,12 @@ export default function Marquee({ text, width }: MarqueeParams) {
     setIsLooping(true);
     setTimeout(() => {
       setIsLooping(false);
-      console.log("aniamtion end");
     }, animationDuration * 1000);
   }
 
   useEffect(() => {
     if (textRef.current) {
       const textWidth = textRef.current.getBoundingClientRect().width;
-      console.log("textWidth", textWidth);
       if (textWidth / 2 > width) {
         setShouldLoop(true);
       } else {

@@ -2,7 +2,7 @@ import React, {
   useState,
   useRef,
   useEffect,
-  useImperativeHandle,
+  memo,
   MutableRefObject,
 } from "react";
 import { Drawer } from "antd";
@@ -19,7 +19,7 @@ type AudioListDrawerParams = {
   drawerRef: MutableRefObject<() => void>;
 };
 
-export default function AudioListDrawer({
+function AudioListDrawer({
   handleSwitchTo,
   audioList,
   currentPlayingIdx,
@@ -73,3 +73,6 @@ export default function AudioListDrawer({
     </Drawer>
   );
 }
+
+
+export default memo(AudioListDrawer)

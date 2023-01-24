@@ -8,15 +8,17 @@ import {
 import { Popover } from "antd";
 import classnames from "classnames";
 import { useImmer } from "use-immer";
-import { PlayMode } from "../../models/AudioPlayer";
-import { IconFont } from "../../utils/config";
+import { useDispatch, useSelector } from "react-redux";
+import { PlayMode, setCurrentPlayingTimeReducer } from "@models/AudioPlayer";
+import { IconFont } from "@utils/config";
 import Marquee from "@components/Marquee";
 import { genArtistName } from "@utils/index";
 import { transformMIllionSecondsToTimeString } from "../../utils";
 import styles from "./PlayerBar.module.less";
 
-import type { DragEvent, MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import type { CurrentPlayingInfo, AudioInfo } from "../../models/AudioPlayer";
+import type { RootState } from "@models/index";
 
 type PlayerBarParams = {
   handlePlay(): void;
@@ -57,7 +59,10 @@ export default function PlayerBar({
   isPlaying,
   playMode,
 }: PlayerBarParams) {
-  const [currentTime, setCurrentTime] = useImmer(0);
+  const currentTime = useSelector(
+    (rootState: RootState) => rootState.audioPlayer.currentPlayingTime
+  );
+  const dispatch = useDispatch();
   // 0~1
   const [currentVolumn, setCurrentVolumn] = useImmer(1);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -108,7 +113,7 @@ export default function PlayerBar({
       player.volume = vo < 0 ? 0 : vo;
       setCurrentVolumn(player.volume);
     }
-  }, [])
+  }, []);
   useEffect(() => {
     const player = audioRef.current;
     if (player) {
@@ -129,27 +134,27 @@ export default function PlayerBar({
       };
       // 切换播放进度-开始
       player.onseeking = function (e) {
-        console.log("seeking");
+        // console.log("seeking");
       };
       // 切换播放进度-结束
       player.onseeked = function (e) {
-        console.log("onseeked");
+        // console.log("onseeked");
       };
       player.onplay = function (e) {
-        console.log("onplay");
+        // console.log("onplay");
       };
       player.onpause = function (e) {
-        console.log("onpause");
+        // console.log("onpause");
       };
       player.onplaying = function (e) {
-        console.log("onplaying");
+        // console.log("onplaying");
       };
       player.onloadeddata = function (e) {
-        console.log("onloadeddata");
+        // console.log("onloadeddata");
       };
       player.ontimeupdate = function (e) {
         // console.log("ontimeupdate", player.currentTime);
-        setCurrentTime(player.currentTime);
+        dispatch(setCurrentPlayingTimeReducer({ time: player.currentTime }));
       };
     }
   }, [currentPlayingIdx, audioList, isPlaying, playMode]);

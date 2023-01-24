@@ -13,7 +13,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddles) => [
     ...getDefaultMiddles(),
     sagaMiddleware,
-    createLogger(),
+    createLogger({ diff: true }),
   ],
 });
 
