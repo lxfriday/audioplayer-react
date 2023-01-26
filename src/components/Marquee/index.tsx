@@ -24,7 +24,12 @@ export default function Marquee({ text, width }: MarqueeParams) {
   useEffect(() => {
     if (textRef.current) {
       const textWidth = textRef.current.getBoundingClientRect().width;
-      if (textWidth / 2 > width) {
+      // if (textWidth / 2 > width) {
+      //   setShouldLoop(true);
+      // } else {
+      //   setShouldLoop(false);
+      // }
+      if (textWidth > width) {
         setShouldLoop(true);
       } else {
         setShouldLoop(false);
@@ -43,7 +48,7 @@ export default function Marquee({ text, width }: MarqueeParams) {
         onMouseEnter={startAnimation}
       >
         {text}
-        {text}
+        {shouldLoop ? text : ""}
       </span>
     </div>
   );
